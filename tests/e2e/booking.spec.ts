@@ -2,6 +2,47 @@ import { test, expect } from "@playwright/test";
 import { addDays, isOpen, today } from "../../src/lib/schedule";
 import { randomUUID } from "node:crypto";
 
+test("painel de reservas permite editar escolhas e navegar pelo calendário", async ({
+  page,
+}, testInfo) => {
+  await page.goto("/#agendar");
+  const panel = page.getByLabel("Agendamento com a recepção BRAVO");
+  const summary = panel.getByRole("complementary", { name: "Resumo da reserva" });
+  await expect(
+    panel.getByRole("heading", { name: "Qual cuidado combina com você?" }),
+  ).toBeVisible();
+  await panel.screenshot({ path: `test-results/${testInfo.project.name}-panel-service.png` });
+  await panel.getByRole("button", { name: /Corte de cabelo/ }).click();
+  await expect(summary.getByText("Corte de cabelo", { exact: true })).toBeVisible();
+  await panel.getByRole("button", { name: /Lucas Almeida/ }).click();
+  await expect(panel.getByRole("button", { name: "Mês anterior" })).toBeDisabled();
+  const nextMonth = panel.getByRole("button", { name: "Próximo mês" });
+  if (await nextMonth.isEnabled()) {
+    await nextMonth.click();
+    await expect(panel.getByRole("button", { name: "Mês anterior" })).toBeEnabled();
+    await panel.getByRole("button", { name: "Mês anterior" }).click();
+  }
+  const availableDates = panel.locator(".date-choice");
+  await expect(availableDates.first()).toBeEnabled();
+  await panel.screenshot({ path: `test-results/${testInfo.project.name}-panel-calendar.png` });
+  await availableDates.last().click();
+  await panel.locator(".time-choice").first().click();
+  await expect(panel.getByLabel("Seu nome")).toBeVisible();
+  await summary.getByRole("button", { name: "Alterar serviço" }).click();
+  await expect(
+    panel.getByRole("heading", { name: "Qual cuidado combina com você?" }),
+  ).toBeFocused();
+  await expect(summary.getByText("A escolher", { exact: true })).toHaveCount(4);
+  await panel.getByRole("button", { name: /Barba completa/ }).click();
+  await expect(summary.getByText("R$ 40", { exact: true })).toBeVisible();
+  for (const width of [360, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 1000 });
+    await expect
+      .poll(() => page.locator("body").evaluate((el) => el.scrollWidth <= innerWidth))
+      .toBe(true);
+  }
+});
+
 test("página responsiva, navegação acessível e movimento reduzido", async ({ page }, testInfo) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");

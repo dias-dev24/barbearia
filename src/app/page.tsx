@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Scissors, Clock3, Sparkles, Coffee, MapPin, Check, Plus } from "lucide-react";
+import { Scissors, Clock3, Sparkles, Coffee, Check, Plus } from "lucide-react";
 import { Header } from "@/components/header";
 import { BookingChat } from "@/components/booking-chat";
 import { Reveal } from "@/components/reveal";
@@ -279,42 +279,34 @@ export default function Home() {
           </div>
         </section>
         <section id="agendar" className="section shell booking-section">
-          <div className="booking-copy" data-reveal>
-            <p className="eyebrow">SEU PRÓXIMO BOM MOMENTO</p>
-            <h2>
-              Sua cadeira
-              <br />
-              está <em>te esperando.</em>
-            </h2>
-            <p>
-              Escolha o cuidado, o profissional e o melhor horário. Nossa recepção digital cuida do
-              resto.
-            </p>
-            <ul className="booking-benefits">
-              <li>
-                <Check />
-                Agende em poucos passos
-              </li>
-              <li>
-                <Check />
-                Horários disponíveis em tempo real
-              </li>
-              <li>
-                <Check />
-                Sem cadastro, sem complicação
-              </li>
-            </ul>
-            <div className="location-card">
-              <MapPin size={22} />
-              <div>
-                <strong>Um espaço para chamar de seu.</strong>
-                <p>
-                  Terça a sexta · 09h às 19h
-                  <br />
-                  Sábado · 09h às 17h
-                </p>
-                <small>Unidade demonstrativa · São Paulo, SP</small>
-              </div>
+          <div className="booking-introduction" data-reveal>
+            <div>
+              <p className="eyebrow">RESERVE SEU MOMENTO</p>
+              <h2>
+                Seu estilo começa
+                <br />
+                <em>com uma escolha.</em>
+              </h2>
+            </div>
+            <div className="booking-introduction-copy">
+              <p>
+                Um cuidado, um profissional e um horário que combina com a sua rotina. Seu próximo
+                momento BRAVO começa aqui.
+              </p>
+              <ul className="booking-benefits">
+                <li>
+                  <Check />
+                  Sem cadastro
+                </li>
+                <li>
+                  <Check />
+                  Disponibilidade em tempo real
+                </li>
+              </ul>
+              <p className="booking-opening-hours">
+                <Clock3 size={16} />
+                Ter–sex, 09h–19h · Sáb, 09h–17h
+              </p>
             </div>
           </div>
           <BookingChat />

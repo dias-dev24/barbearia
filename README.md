@@ -2,9 +2,9 @@
 
 **Seu estilo. Sua assinatura.**
 
-Site de barbearia com identidade visual própria e um chatbot que transforma o agendamento em uma conversa guiada. O visitante escolhe serviço, profissional, dia e horário, revisa os dados e recebe um comprovante persistido no banco.
+Site de barbearia com identidade visual própria e um painel de reservas em seis etapas. O visitante escolhe serviço, profissional, dia e horário, acompanha o resumo da reserva, revisa os dados e recebe um comprovante persistido no banco.
 
-O chatbot é uma máquina de estados com opções contextuais: não usa modelos de linguagem, chaves de API, assinaturas de IA ou tokens pagos. Não há painel administrativo.
+O agendamento usa opções contextuais, calendário mensal e horários disponíveis separados por manhã e tarde: não usa modelos de linguagem, chaves de API, assinaturas de IA ou tokens pagos. Não há painel administrativo.
 
 > Projeto de portfólio. Marca, equipe, preços e reservas são fictícios. Não há atendimento, cobrança ou envio de mensagens reais. Use dados fictícios ao experimentar.
 
@@ -55,10 +55,10 @@ Para usar um Chromium já instalado, informe o executável em `PLAYWRIGHT_CHROMI
 ## Experiência
 
 - Design responsivo em preto, marfim e cobre, com fotografias locais.
-- Serviços com preço e duração; links já selecionam o serviço no chatbot.
+- Serviços com preço e duração; links já selecionam o serviço no painel de reservas.
 - Revelação suave de seções e movimento pontual, respeitando `prefers-reduced-motion`.
 - Menu móvel, rótulos de formulário, foco visível e anúncios de erros para leitores de tela.
-- Atendimento guiado em seis etapas, com voltar, recomeçar e estados de carregamento, falha e agenda cheia.
+- Reservas em seis etapas, com fotos dos profissionais, calendário mensal, resumo com edição das escolhas e estados de carregamento, falha e agenda cheia.
 - Comprovante restaurado na mesma sessão do navegador e link para adicionar o evento à Agenda Google, com serviço, profissional, data, duração e fuso preenchidos. O visitante confirma o salvamento no Google; cancelar no site não remove esse evento.
 - Cancelamento mediante segredo aleatório, com confirmação antes de liberar o horário.
 
