@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Scissors, Clock3, Sparkles, Coffee, MapPin, Check } from "lucide-react";
+import { Scissors, Clock3, Sparkles, Coffee, MapPin, Check, Plus } from "lucide-react";
 import { Header } from "@/components/header";
 import { BookingChat } from "@/components/booking-chat";
 import { Reveal } from "@/components/reveal";
@@ -7,9 +7,12 @@ import { services, barbers, money } from "@/lib/catalog";
 export default function Home() {
   return (
     <>
+      <a className="skip-link" href="#conteudo">
+        Pular para o conteúdo
+      </a>
       <Header />
       <main id="inicio">
-        <section className="hero">
+        <section className="hero" id="conteudo">
           <Image
             className="hero-photo"
             src="/images/hero.jpg"
@@ -24,9 +27,11 @@ export default function Home() {
               <span /> MAIS QUE UM CORTE. UM RITUAL.
             </p>
             <h1>
-              Seu estilo.
+              <span>Seu estilo.</span>
               <br />
-              Sua <em>assinatura.</em>
+              <span>
+                Sua <em>assinatura.</em>
+              </span>
             </h1>
             <p className="hero-description">
               Um bom corte muda o visual.
@@ -46,11 +51,12 @@ export default function Home() {
             </div>
           </div>
           <div className="hero-caption">
+            <Scissors size={24} strokeWidth={1} />
             <span>BRAVO EXPERIENCE</span>
             <small>Tradição no cuidado. Atitude no estilo.</small>
           </div>
           <a href="#experiencia" className="scroll-hint" aria-label="Conheça a experiência">
-            <span /> SCROLL PARA DESCOBRIR
+            <span /> DESCUBRA A BRAVO
           </a>
         </section>
         <div className="values-strip">
@@ -80,7 +86,7 @@ export default function Home() {
           <div className="experience-photo">
             <Image
               src="/images/experience.jpg"
-              alt="Barbeiro trabalhando com atenção no acabamento de um corte"
+              alt="Tesouras, máquinas e produtos profissionais sobre a bancada da barbearia"
               fill
               sizes="(max-width: 760px) 100vw, 45vw"
             />
@@ -109,6 +115,14 @@ export default function Home() {
               você se reconhecendo no espelho.
             </p>
             <div className="signature">Cuidado de verdade. Sem pressa.</div>
+            <div className="experience-details">
+              <span>
+                <Scissors size={20} /> Técnica com personalidade
+              </span>
+              <span>
+                <Coffee size={20} /> Seu momento de pausa
+              </span>
+            </div>
             <a className="underlined-link" href="#agendar">
               Viva a experiência BRAVO
             </a>
@@ -133,7 +147,7 @@ export default function Home() {
             <div className="service-grid">
               {services.map((service, index) => (
                 <article
-                  className={`service-card ${index === 2 ? "featured" : ""}`}
+                  className={`service-card stagger-${index} ${index === 2 ? "featured" : ""}`}
                   key={service.id}
                   data-reveal
                 >
@@ -158,7 +172,7 @@ export default function Home() {
                     </span>
                   </div>
                   <a className="service-book" href={`/?servico=${service.id}#agendar`}>
-                    Escolher esse cuidado <span>+</span>
+                    Escolher esse cuidado <Plus size={18} aria-hidden="true" />
                   </a>
                 </article>
               ))}
@@ -168,8 +182,8 @@ export default function Home() {
             </p>
           </div>
         </section>
-        <section id="equipe" className="section shell team" data-reveal>
-          <div className="section-heading">
+        <section id="equipe" className="section shell team">
+          <div className="section-heading" data-reveal>
             <div>
               <p className="eyebrow">TALENTO EM BOAS MÃOS</p>
               <h2>
@@ -185,7 +199,7 @@ export default function Home() {
           </div>
           <div className="team-grid">
             {barbers.map((barber, i) => (
-              <article className="team-card" key={barber.id}>
+              <article className={`team-card stagger-${i}`} key={barber.id} data-reveal>
                 <div className={`barber-image barber-image-${i}`}>
                   <Image
                     src={`/images/barber-${i + 1}.jpg`}
@@ -196,6 +210,7 @@ export default function Home() {
                   <span className="barber-mark">
                     <Scissors size={20} />
                   </span>
+                  <span className="barber-specialty">{barber.specialty}</span>
                 </div>
                 <div className="barber-info">
                   <h3>{barber.name}</h3>
@@ -208,8 +223,11 @@ export default function Home() {
             Equipe e marca fictícias, criadas para este projeto de portfólio. Fotos ilustrativas.
           </p>
         </section>
-        <section className="quote-section" data-reveal>
-          <div className="shell">
+        <section className="quote-section">
+          <span className="quote-wordmark" aria-hidden="true">
+            BRAVO
+          </span>
+          <div className="shell" data-reveal>
             <Scissors size={32} />
             <p>
               Estilo é se sentir bem
@@ -219,8 +237,49 @@ export default function Home() {
             <span>ESSE É O NOSSO MELHOR ACABAMENTO.</span>
           </div>
         </section>
+        <section className="ritual-section section shell" aria-labelledby="ritual-title">
+          <div className="section-heading" data-reveal>
+            <div>
+              <p className="eyebrow">DO PRIMEIRO OLÁ AO ÚLTIMO DETALHE</p>
+              <h2 id="ritual-title">
+                O seu ritual.
+                <br />
+                <em>Do seu jeito.</em>
+              </h2>
+            </div>
+            <p>
+              Você chega com uma ideia.
+              <br />A gente cuida de cada detalhe.
+            </p>
+          </div>
+          <div className="ritual-grid">
+            {[
+              {
+                icon: Coffee,
+                title: "Uma boa conversa",
+                text: "Um café, uma pausa e tempo para entender seu estilo e o que você procura.",
+              },
+              {
+                icon: Scissors,
+                title: "Precisão em cada gesto",
+                text: "Tesoura, máquina e navalha na medida certa. Técnica a serviço da sua personalidade.",
+              },
+              {
+                icon: Sparkles,
+                title: "O toque final",
+                text: "Acabamento, finalização e orientações para manter o visual nos próximos dias.",
+              },
+            ].map(({ icon: Icon, title, text }, index) => (
+              <article key={title} className={`ritual-item stagger-${index}`} data-reveal>
+                <Icon size={26} strokeWidth={1.4} />
+                <h3>{title}</h3>
+                <p>{text}</p>
+              </article>
+            ))}
+          </div>
+        </section>
         <section id="agendar" className="section shell booking-section">
-          <div className="booking-copy">
+          <div className="booking-copy" data-reveal>
             <p className="eyebrow">SEU PRÓXIMO BOM MOMENTO</p>
             <h2>
               Sua cadeira
@@ -259,6 +318,44 @@ export default function Home() {
             </div>
           </div>
           <BookingChat />
+        </section>
+        <section className="faq-section section shell" aria-labelledby="faq-title">
+          <div data-reveal>
+            <p className="eyebrow">ANTES DE SENTAR NA CADEIRA</p>
+            <h2 id="faq-title">
+              Tudo às claras.
+              <br />
+              <em>Até nos detalhes.</em>
+            </h2>
+          </div>
+          <div className="faq-list" data-reveal>
+            {[
+              [
+                "Como funciona o agendamento?",
+                "Escolha seu serviço, profissional, dia e horário. Depois, informe seu nome e celular e confirme. O comprovante aparece na tela e você pode adicionar o horário ao Google Agenda.",
+              ],
+              [
+                "Preciso criar uma conta?",
+                "Não. Você agenda diretamente pelo site, sem senha ou cadastro de uma conta.",
+              ],
+              [
+                "Posso cancelar meu horário?",
+                "Sim. No comprovante, toque em Cancelar agendamento e confirme. Se você adicionou o evento ao Google Agenda, remova-o também por lá.",
+              ],
+              [
+                "Este é um estabelecimento real?",
+                "A BRAVO é um projeto demonstrativo de portfólio. A marca, a equipe e os agendamentos são fictícios. Nenhum atendimento ou cobrança será realizado.",
+              ],
+            ].map(([question, answer]) => (
+              <details key={question}>
+                <summary>
+                  {question}
+                  <Plus size={20} aria-hidden="true" />
+                </summary>
+                <p>{answer}</p>
+              </details>
+            ))}
+          </div>
         </section>
       </main>
       <footer>

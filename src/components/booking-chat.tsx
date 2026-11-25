@@ -6,7 +6,6 @@ import {
   Clock3,
   RotateCcw,
   ChevronLeft,
-  Download,
   CalendarDays,
   LoaderCircle,
   ShieldCheck,
@@ -40,34 +39,23 @@ async function api(url: string, data: unknown, method = "POST") {
     });
   return result;
 }
-function calendar(record: Receipt) {
+function googleCalendarUrl(record: Receipt) {
   const start = new Date(`${record.date}T${record.time}:00-03:00`);
   const stamp = (date: Date) =>
     date
       .toISOString()
       .replace(/[-:]/g, "")
       .replace(/\.\d{3}/, "");
-  const text = [
-    "BEGIN:VCALENDAR",
-    "VERSION:2.0",
-    "PRODID:-//BRAVO//Agendamento Demo//PT",
-    "BEGIN:VEVENT",
-    `UID:${record.id}@bravo.demo`,
-    `DTSTAMP:${stamp(new Date())}`,
-    `DTSTART:${stamp(start)}`,
-    `DTEND:${stamp(new Date(start.valueOf() + record.duration * 60000))}`,
-    `SUMMARY:BRAVO - ${record.service}`,
-    `DESCRIPTION:Agendamento demonstrativo com ${record.barber}. Nenhum atendimento real sera realizado.`,
-    "END:VEVENT",
-    "END:VCALENDAR",
-    "",
-  ].join("\r\n");
-  const url = URL.createObjectURL(new Blob([text], { type: "text/calendar;charset=utf-8" }));
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = "bravo-agendamento.ics";
-  anchor.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  const end = new Date(start.valueOf() + record.duration * 60_000);
+  const params = new URLSearchParams({
+    action: "TEMPLATE",
+    text: `BRAVO — ${record.service}`,
+    dates: `${stamp(start)}/${stamp(end)}`,
+    stz: "America/Sao_Paulo",
+    etz: "America/Sao_Paulo",
+    details: `Agendamento demonstrativo com ${record.barber}. Nenhum atendimento real será realizado. Cancelar a reserva no site não remove este evento da sua agenda.`,
+  });
+  return `https://calendar.google.com/calendar/r/eventedit?${params}`;
 }
 
 export function BookingChat() {
@@ -152,7 +140,10 @@ export function BookingChat() {
   }, [serviceId, barberId, date, refresh, saved]);
 
   useEffect(() => {
-    conversation.current?.scrollTo({ top: conversation.current.scrollHeight, behavior: "smooth" });
+    conversation.current?.scrollTo({
+      top: conversation.current.scrollHeight,
+      behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+    });
   }, [step]);
 
   function choose(key: keyof Selection, value: string) {
@@ -301,10 +292,18 @@ export function BookingChat() {
           </p>
           {saved.appointment.status !== "cancelled" && (
             <>
-              <button className="button w-full" onClick={() => calendar(saved.appointment)}>
-                <Download size={16} />
-                Adicionar ao calendário
-              </button>
+              <a
+                className="button w-full"
+                href={googleCalendarUrl(saved.appointment)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <CalendarDays size={16} />
+                Adicionar ao Google Agenda
+              </a>
+              <p className="control-note">
+                Confira os detalhes e salve o agendamento no Google Agenda.
+              </p>
               {cancelConfirm ? (
                 <div className="cancel-confirm">
                   <p>Deseja mesmo cancelar este horário?</p>
@@ -385,7 +384,7 @@ export function BookingChat() {
               </div>
             )}
           </div>
-          <div className="chat-controls">
+          <div className="chat-controls" key={step}>
             <div className="chat-step-label">
               <span>
                 {

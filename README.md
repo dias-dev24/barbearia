@@ -48,7 +48,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-Os testes iniciam um servidor próprio na porta 3100 e um banco separado em `test-results/e2e.sqlite`. Cobrem desktop e celular, menu, reserva completa, comprovante após recarregar, download de calendário, cancelamento e disputa simultânea pelo mesmo horário. Em Linux, a instalação das bibliotecas do navegador pode exigir `npx playwright install --with-deps chromium`.
+Os testes iniciam um servidor próprio na porta 3100 e um banco separado em `test-results/e2e.sqlite`, com compilação isolada em `.next-e2e/` para permitir testes enquanto o site roda na porta 3000. Cobrem desktop e celular, menu, reserva completa, comprovante após recarregar, link preenchido para a Agenda Google, cancelamento e disputa simultânea pelo mesmo horário. Em Linux, a instalação das bibliotecas do navegador pode exigir `npx playwright install --with-deps chromium`.
 
 Para usar um Chromium já instalado, informe o executável em `PLAYWRIGHT_CHROMIUM_PATH`. Capturas e traces ficam em `test-results/` e não são versionados.
 
@@ -59,7 +59,7 @@ Para usar um Chromium já instalado, informe o executável em `PLAYWRIGHT_CHROMI
 - Revelação suave de seções e movimento pontual, respeitando `prefers-reduced-motion`.
 - Menu móvel, rótulos de formulário, foco visível e anúncios de erros para leitores de tela.
 - Atendimento guiado em seis etapas, com voltar, recomeçar e estados de carregamento, falha e agenda cheia.
-- Comprovante restaurado na mesma sessão do navegador e exportação `.ics`.
+- Comprovante restaurado na mesma sessão do navegador e link para adicionar o evento à Agenda Google, com serviço, profissional, data, duração e fuso preenchidos. O visitante confirma o salvamento no Google; cancelar no site não remove esse evento.
 - Cancelamento mediante segredo aleatório, com confirmação antes de liberar o horário.
 
 ## Regras da agenda

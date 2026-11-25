@@ -2,6 +2,44 @@ import { test, expect } from "@playwright/test";
 import { addDays, isOpen, today } from "../../src/lib/schedule";
 import { randomUUID } from "node:crypto";
 
+test("página responsiva, navegação acessível e movimento reduzido", async ({ page }, testInfo) => {
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await page.goto("/");
+  for (const width of [360, 390, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    await expect
+      .poll(() => page.locator("body").evaluate((el) => el.scrollWidth <= innerWidth))
+      .toBe(true);
+    const chat = page.getByLabel("Agendamento com a recepção BRAVO");
+    await chat.scrollIntoViewIfNeeded();
+    await expect(chat.getByRole("button", { name: /Corte de cabelo/ })).toBeVisible();
+    expect(
+      await page.locator(".hero-photo").evaluate((el) => getComputedStyle(el).animationName),
+    ).toBe("none");
+  }
+  await page.setViewportSize({
+    width: testInfo.project.name === "mobile" ? 390 : 1440,
+    height: 900,
+  });
+  if (testInfo.project.name === "mobile") {
+    const menu = page.getByRole("button", { name: "Abrir menu" });
+    await menu.click();
+    await expect(page.getByRole("navigation")).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(menu).toBeFocused();
+    await expect(menu).toHaveAttribute("aria-expanded", "false");
+  }
+  const question = page.locator("summary").filter({ hasText: "Posso cancelar meu horário?" });
+  await question.click();
+  await expect(
+    page.getByText("Sim. No comprovante, toque em Cancelar agendamento", { exact: false }),
+  ).toBeVisible();
+  await page
+    .locator("#servicos")
+    .screenshot({ path: `test-results/${testInfo.project.name}-services.png` });
+  await page.screenshot({ path: `test-results/${testInfo.project.name}-full.png`, fullPage: true });
+});
+
 test("página responsiva e agendamento até o cancelamento", async ({ page }, testInfo) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
@@ -33,9 +71,18 @@ test("página responsiva e agendamento até o cancelamento", async ({ page }, te
   await expect(chat.getByText("R$ 85", { exact: false }).last()).toBeVisible();
   await chat.getByRole("button", { name: "Confirmar meu horário" }).click();
   await expect(chat.getByRole("heading", { name: "Tudo certo, Cliente!" })).toBeVisible();
-  const download = page.waitForEvent("download");
-  await chat.getByRole("button", { name: "Adicionar ao calendário" }).click();
-  expect((await download).suggestedFilename()).toBe("bravo-agendamento.ics");
+  const calendarLink = chat.getByRole("link", { name: "Adicionar ao Google Agenda" });
+  await expect(calendarLink).toBeVisible();
+  await expect(calendarLink).toHaveAttribute("target", "_blank");
+  const calendarUrl = new URL((await calendarLink.getAttribute("href"))!);
+  expect(calendarUrl.origin).toBe("https://calendar.google.com");
+  expect(calendarUrl.searchParams.get("text")).toBe("BRAVO — Corte + barba");
+  expect(calendarUrl.searchParams.get("stz")).toBe("America/Sao_Paulo");
+  const dates = calendarUrl.searchParams.get("dates")!.split("/");
+  expect(dates[0]).toMatch(/T120000Z$/);
+  expect(dates[1]).toMatch(/T131500Z$/);
+  expect(calendarUrl.searchParams.get("details")).toContain("Lucas Almeida");
+  expect(calendarUrl.toString()).not.toContain("1198888");
   await page.reload();
   await expect(chat.getByRole("heading", { name: "Tudo certo, Cliente!" })).toBeVisible();
   await chat.scrollIntoViewIfNeeded();
