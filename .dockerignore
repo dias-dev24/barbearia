@@ -1,0 +1,10 @@
+node_modules
+.next
+.git
+.aws
+.codex
+.agents
+.env*
+data
+test-results
+playwright-report

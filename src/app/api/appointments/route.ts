@@ -8,5 +8,7 @@ export async function POST(request: Request) {
     const db = store();
     db.limit(`phone:${input.phone}`, 8);
     return Response.json(db.reserve(input), { status: 201, headers: noStore });
-  } catch (error) { return failure(error); }
+  } catch (error) {
+    return failure(error);
+  }
 }
